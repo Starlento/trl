@@ -33,9 +33,9 @@ if __name__ == "__main__":
     script_args, training_args, model_config = parser.parse_args_and_config()
     
     # print out the args
-    print(f"script_args: {script_args}")
+    # print(f"script_args: {script_args}")
     # print(f"training_args: {training_args}")
-    print(f"model_config: {model_config}")
+    # print(f"model_config: {model_config}")
     
     training_args.gradient_checkpointing_kwargs = dict(use_reentrant=False)
     training_args.remove_unused_columns = False
@@ -99,7 +99,7 @@ if __name__ == "__main__":
         labels = batch["input_ids"].clone()
         labels[labels == processor.tokenizer.pad_token_id] = -100  #
         # Ignore the image token index in the loss computation (model specific)
-        image_token_id = processor.tokenizer.convert_tokens_to_ids(processor.image_token)
+        image_token_id = 151655
         labels[labels == image_token_id] = -100
         batch["labels"] = labels
 
@@ -127,7 +127,7 @@ if __name__ == "__main__":
 
     # Save and push to hub
     trainer.save_model(training_args.output_dir)
-    if training_args.push_to_hub:
-        trainer.push_to_hub(dataset_name=script_args.dataset_name)
-        if trainer.accelerator.is_main_process:
-            processor.push_to_hub(training_args.hub_model_id)
+    # if training_args.push_to_hub:
+    #     trainer.push_to_hub(dataset_name=script_args.dataset_name)
+    #     if trainer.accelerator.is_main_process:
+    #         processor.push_to_hub(training_args.hub_model_id)
