@@ -9,7 +9,9 @@ accelerate launch `
     --output_dir "./downloads/sft-Qwen2-VL-2B-Instruct" `
     --bf16 `
     --torch_dtype bfloat16 `
-    --gradient_checkpointing
+    --gradient_checkpointing `
+    --logging_steps 10 `
+    --max_seq_length 8192
 """
 
 import torch
@@ -99,8 +101,9 @@ if __name__ == "__main__":
         labels = batch["input_ids"].clone()
         labels[labels == processor.tokenizer.pad_token_id] = -100  #
         # Ignore the image token index in the loss computation (model specific)
-        image_token_id = 151655
-        labels[labels == image_token_id] = -100
+        labels[labels == 151652] = -100
+        labels[labels == 151655] = -100
+        labels[labels == 151653] = -100
         batch["labels"] = labels
 
         return batch
