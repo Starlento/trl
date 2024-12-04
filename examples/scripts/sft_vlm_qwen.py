@@ -2,10 +2,10 @@
 accelerate launch `
     --config_file "examples/accelerate_configs/single_gpu.yaml" `
     examples/scripts/sft_vlm_qwen.py `
-    --dataset_name "./downloads/llava-instruct-mix-vsft" `
     --model_name_or_path "./downloads/Qwen2-VL-2B-Instruct" `
     --per_device_train_batch_size 1 `
-    --gradient_accumulation_steps 1 `
+    --gradient_accumulation_steps 8 `
+    --dataset_name 'dummy' `
     --output_dir "./downloads/sft-Qwen2-VL-2B-Instruct" `
     --bf16 `
     --torch_dtype bfloat16 `
@@ -15,8 +15,11 @@ accelerate launch `
 """
 
 import torch
-from datasets import load_dataset
+from datasets import load_dataset, load_from_disk
 from transformers import Qwen2VLForConditionalGeneration, AutoProcessor, LlavaForConditionalGeneration
+
+from PIL import Image
+import os
 
 from trl import (
     ModelConfig,
@@ -31,6 +34,7 @@ from trl import (
 
 
 if __name__ == "__main__":
+    dataset_path = "./downloads/datasets/bus_only_sign"
     parser = TrlParser((ScriptArguments, SFTConfig, ModelConfig))
     script_args, training_args, model_config = parser.parse_args_and_config()
     
@@ -89,7 +93,8 @@ if __name__ == "__main__":
     def collate_fn(examples):
         # Get the texts and images, and apply the chat template
         texts = [processor.apply_chat_template(example["messages"], tokenize=False) for example in examples]
-        images = [example["images"] for example in examples]
+        images = [[Image.open(os.path.join(dataset_path, "images", image_path)).convert('RGB') for image_path in example["images"]] for example in examples]
+        # images = [example["images"] for example in examples]
         if isinstance(model, LlavaForConditionalGeneration):
             # LLava1.5 does not support multiple images
             images = [image[0] for image in images]
@@ -111,7 +116,7 @@ if __name__ == "__main__":
     ################
     # Dataset
     ################
-    dataset = load_dataset(script_args.dataset_name)
+    dataset = load_from_disk(dataset_path)
 
     ################
     # Training
