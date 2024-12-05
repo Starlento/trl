@@ -13,7 +13,6 @@
 # limitations under the License.
 
 from dataclasses import dataclass
-from typing import Optional
 
 
 @dataclass
@@ -21,24 +20,22 @@ class ScriptArguments:
     """
     Arguments common to all scripts.
 
-    dataset_name (`str`):
-        Dataset name.
-    dataset_train_split (`str`, *optional*, defaults to `"train"`):
-        Dataset split to use for training.
-    dataset_test_split (`str`, *optional*, defaults to `"test"`):
-        Dataset split to use for evaluation.
-    config (`str` or `None`, *optional*, defaults to `None`):
-        Path to the optional config file.
-    gradient_checkpointing_use_reentrant (`bool`, *optional*, defaults to `False`):
-        Whether to apply `use_reentrant` for gradient_checkpointing.
-    ignore_bias_buffers (`bool`, *optional*, defaults to `False`):
-        Debug argument for distributed training. Fix for DDP issues with LM bias/mask buffers - invalid scalar type,
-        inplace operation. See https://github.com/huggingface/transformers/issues/22482#issuecomment-1595790992.
+    Args:
+        dataset_name (`str`):
+            Dataset name.
+        dataset_train_split (`str`, *optional*, defaults to `"train"`):
+            Dataset split to use for training.
+        dataset_test_split (`str`, *optional*, defaults to `"test"`):
+            Dataset split to use for evaluation.
+        gradient_checkpointing_use_reentrant (`bool`, *optional*, defaults to `False`):
+            Whether to apply `use_reentrant` for gradient_checkpointing.
+        ignore_bias_buffers (`bool`, *optional*, defaults to `False`):
+            Debug argument for distributed training. Fix for DDP issues with LM bias/mask buffers - invalid scalar
+            type, inplace operation. See https://github.com/huggingface/transformers/issues/22482#issuecomment-1595790992.
     """
 
     dataset_name: str
     dataset_train_split: str = "train"
     dataset_test_split: str = "test"
-    config: Optional[str] = None
     gradient_checkpointing_use_reentrant: bool = False
     ignore_bias_buffers: bool = False
